@@ -20,6 +20,9 @@ export default props => (
       <Link prefetch href={`/authors`}>
         <a>Authors</a>
       </Link>
+      <Link prefetch href={`/about`}>
+        <a>About</a>
+      </Link>
     </nav>
     <div id="main">
       {props.children}

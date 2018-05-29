@@ -6,3 +6,5 @@ routes
   .add('blog', '/blogs/:slug')
   .add('authors', '/authors')
   .add('author', '/authors/:slug')
+  .add('about', '/about')
+  .add('employee', '/about/employees/:slug')
