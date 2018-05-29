@@ -1,5 +1,8 @@
 const routes = (module.exports = require('next-routes')())
 
 routes
-  .add('blog', '/blog/:slug')
-  .add('author', '/author/:slug')
+  .add('index', '/')
+  .add('blogs', '/blogs')
+  .add('blog', '/blogs/:slug')
+  .add('authors', '/authors')
+  .add('author', '/authors/:slug')

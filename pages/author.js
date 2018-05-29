@@ -3,6 +3,7 @@ import BlockContent from '@sanity/block-content-to-react'
 import imageUrlBuilder from '@sanity/image-url'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import Layout from '../components/Layout'
 import client from '../client'
 
 const builder = imageUrlBuilder(client)
@@ -10,7 +11,14 @@ function urlFor(source) {
   return builder.image(source)
 }
 
-const Author = ({ name = 'No name', image = {}, bio = [], _updatedAt = '' }) => <div>
+const pageQuery = `*[slug.current == $slug][0]{
+  name,
+  image,
+  bio,
+  _updatedAt
+}`
+
+const Author = ({ name = 'No name', image = {}, bio = [], _updatedAt = '' }) => <Layout><div>
   <h1>
     <small>  Updated {format(_updatedAt, 'DD. MMMM, YYYY')}.</small>
     <br />
@@ -25,15 +33,10 @@ const Author = ({ name = 'No name', image = {}, bio = [], _updatedAt = '' }) => 
     dataset={client.clientConfig.dataset}
   />
   <Link prefetch href="/"><a>Back to home</a></Link>
-</div>
+</div></Layout>
 
 Author.getInitialProps = async ({ query: { slug } }) => {
-  return await client.fetch(`*[slug.current == $slug][0]{
-    name,
-    image,
-    bio,
-    _updatedAt
-  }`, { slug })
+  return await client.fetch(pageQuery, { slug })
 }
 
 export default Author

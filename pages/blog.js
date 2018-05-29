@@ -3,6 +3,7 @@ import BlockContent from '@sanity/block-content-to-react'
 import imageUrlBuilder from '@sanity/image-url'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import Layout from '../components/Layout'
 import client from '../client'
 
 const builder = imageUrlBuilder(client)
@@ -18,7 +19,16 @@ const CommaJoiner = ({ list = [], conjuction = 'and', separator = ',' }) => <Fra
   </span>)
 }</Fragment>
 
-const BlogPost = ({ title = 'No title', name = 'No name', categories = [], authorImage = {}, body = [], _updatedAt = '' }) => <div>
+const pageQuery = `*[slug.current == $slug][0]{
+  title,
+  "name": author->name,
+  "categories": categories[]->title,
+  "authorImage": author->image,
+  body,
+  _updatedAt
+}`
+
+const BlogPost = ({ title = 'No title', name = 'No name', categories = [], authorImage = {}, body = [], _updatedAt = '' }) => <Layout><div>
   <h1>{title}</h1>
   By {name}. Updated {format(_updatedAt, 'DD. MMMM, YYYY')}. {categories.length && <span>Posted in <CommaJoiner list={categories} /></span>}
   <div><img src={urlFor(authorImage).width(50).url()} /></div>
@@ -29,17 +39,10 @@ const BlogPost = ({ title = 'No title', name = 'No name', categories = [], autho
     dataset={client.clientConfig.dataset}
   />
   <Link prefetch href="/"><a>Back to home</a></Link>
-</div>
+</div></Layout>
 
 BlogPost.getInitialProps = async ({ query: { slug } }) => {
-  return await client.fetch(`*[slug.current == $slug][0]{
-      title,
-      "name": author->name,
-      "categories": categories[]->title,
-      "authorImage": author->image,
-      body,
-      _updatedAt
-    }`, { slug })
+  return await client.fetch(pageQuery, { slug })
 }
 
 export default BlogPost
